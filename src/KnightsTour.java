@@ -42,78 +42,61 @@ public class KnightsTour {
 		return true;
 	}
 	
-	public static LinkedList validPlaces(int r,int c)
+	public static List<String> validPlaces(int r,int c)
 	{
-		LinkedList list = new LinkedList();
+		List<String> list = new ArrayList<String>();
 		
-		int a[] = new int[2];
+		String s = "";
 		
-		
-		if(canMove(r,c,r-2,c+1)==true) 		
+		if(canMove(r,c,r-2,c+1)==true)
 		{
-			a[0]=r-2;
-			a[1]=c+1;
-			list.add(a);
-			System.out.println(r-2+","+c+1);
+			s=(r-2)+","+(c+1);
+			list.add(s);
+			//System.out.println((r-2)+","+(c+1));
 		}
 		
-		if(canMove(r,c,r-1,c+2)==true) 			//
+		if(canMove(r,c,r-1,c+2)==true)
 		{
-			a[0]=r-1;
-			a[1]=c+2;
-			list.add(a);
-			System.out.println(r-1+","+c+2);
+			s=(r+1)+","+(c+2);
+			list.add(s);
+			//System.out.println((r-1)+","+(c+2));
 		}
-		
-		if(canMove(r,c,r+1,c+2)==true) 			//
+		if(canMove(r,c,r+1,c+2)==true)
 		{
-			a[0]=r+2;
-			a[1]=c+2;
-			list.add(a);
-			System.out.println(r+1+","+c+2);
+			s=(r+1)+","+(c+2);
+			list.add(s);
+			//System.out.println((r+1)+","+(c+2));
 		}
-		
-		if(canMove(r,c,r+2,c+1)==true) 			//
+		if(canMove(r,c,r+2,c+1)==true)
 		{
-			a[0]=r+2;
-			a[1]=c+1;
-			list.add(a);
-			System.out.println(r+2+","+c+1);
+			s=(r+2)+","+(c+1);
+			list.add(s);
+			//System.out.println((r+2)+","+(c+1));
 		}
-		
-		if(canMove(r,c,r+2,c-1)==true) 			//
+		if(canMove(r,c,r+2,c-1)==true)
 		{
-			a[0]=r+2;
-			a[1]=c-1;
-			list.add(a);
-			System.out.println(r+2+","+(c-1));
+			s=(r+2)+","+(c-1);
+			list.add(s);
+			//System.out.println((r+2)+","+(c-1));
 		}
-		
-		if(canMove(r,c,r-1,c-2)==true) 			//
+		if(canMove(r,c,r+1,c-2)==true)
 		{
-			a[0]=r-1;
-			a[1]=c-2;
-			list.add(a);
-			System.out.println(r+1+","+(c-2));
+			s=(r+1)+","+(c-2);
+			list.add(s);
+			//System.out.println((r+1)+","+(c-2));
 		}
-		
-		if(canMove(r,c,r-1,c-2)==true) 			//
+		if(canMove(r,c,r-1,c-2)==true)
 		{
-			a[0]=r-1;
-			a[1]=c-2;
-			list.add(a);
-			System.out.println(r-1+","+(c-2));
+			s=(r-1)+","+(c-2);
+			list.add(s);
+			//System.out.println((r-1)+","+(c-2));
 		}
-		
 		if(canMove(r,c,r-2,c-1)==true)
 		{
-			a[0]=r-2;
-			a[1]=c-1;
-			list.add(a);
-			System.out.println(r-2+","+(c-1));
+			s=(r-2)+","+(c-1);
+			list.add(s);
 		}
-		
-		
+		System.out.println(list);
 		return list;
 	}
 	
@@ -136,13 +119,12 @@ public class KnightsTour {
 		
 		display();
 		
-		System.out.println(canMove(0,0,1,2));
-		
-		LinkedList b = validPlaces(0,0);
-		
+		System.out.println(canMove(0,0,2,2));
+		List<String> b = validPlaces(2,2);
 		for(int i=0;i<b.size();i++)
 		{
-			System.out.println(((int [])b.get(i))[0]+","+((int [])b.get(i))[1]);
+			System.out.println(b.get(i));
+			//System.out.println(Integer.parseInt((b.get(i).charAt(0))+"")+","+Integer.parseInt((b.get(i).charAt(2))+""));
 		}
 		
 	}
