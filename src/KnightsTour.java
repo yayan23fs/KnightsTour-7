@@ -14,7 +14,7 @@ public class KnightsTour {
 	
 	public static boolean isPlaced;
 	
-	public static int solutions;
+	public static int[] solution;
 	
 	public static String display()
 	{
@@ -116,8 +116,6 @@ public class KnightsTour {
 			a[i][0]=Integer.parseInt(list.get(i).charAt(0)+"");
 			a[i][1]=Integer.parseInt(list.get(i).charAt(2)+"");
 		}
-		
-		
 		return a;
 	}
 	
@@ -144,11 +142,9 @@ public class KnightsTour {
 		for(int i=0;i<a.length;i++)
 		{
 			array[a[i][0]][a[i][1]] = 1;
-			//display();
 			if (checkOnes() == true)
 			{
-				//Got solution
-				solutions++;
+				//solutions++;
 				//System.out.println("solved");
 				
 			}
@@ -165,6 +161,7 @@ public class KnightsTour {
 		int n = Integer.parseInt(s.charAt(0)+"");
 		int m = Integer.parseInt(s.charAt(2)+"");
 		array = new int[n][m];
+		solution = new int[n*m];
 		
 		for(int i=0;i<array.length;i++)
 		{
@@ -290,7 +287,7 @@ public class KnightsTour {
 	public static void main(String args[])
 	{
 		initialise();
-		solutions=0;
+		
 		frame = new JFrame("Knight's tour");
 		Panel graphicsPanel = new Panel();
 		
@@ -298,8 +295,7 @@ public class KnightsTour {
 		graphicsPanel.addMouseListener(new Mouse());
 		frame.setLayout(new GridLayout(1,1));
 		
-		//frame.add(textPanel);
-		frame.setSize(600, 700);
+		frame.setSize(600, 1000);
 		frame.add(graphicsPanel);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
