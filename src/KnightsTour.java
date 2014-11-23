@@ -1,4 +1,5 @@
 import javax.swing.*;
+import javax.swing.Timer;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -10,11 +11,14 @@ public class KnightsTour {
 	
 	public static JFrame frame;
 	
-	public static int x,y;
+	public static int x,y,key;
 	
-	public static boolean isPlaced;
+	public static int[] solutions,start,end;
 	
-	public static int[] solution;
+	public static float len;
+	
+	public static boolean isPlaced,flag;
+	
 	
 	public static String display()
 	{
@@ -23,6 +27,8 @@ public class KnightsTour {
 		{
 			for(int j=0;j<array[i].length;j++)
 			{
+				s+=array[i][j]+" ";
+				/*
 				if(array[i][j]==1)
 				{
 					s+="K ";
@@ -31,13 +37,13 @@ public class KnightsTour {
 				{
 					s+="_ ";
 				}
+				*/
 			}
 			s+='\n';
 		}
 		System.out.println(s);
 		return s;
 	}
-	
 	
 	
 	public static boolean canMove(int r,int c,int row,int col)
@@ -119,6 +125,43 @@ public class KnightsTour {
 		return a;
 	}
 	
+	
+	public static boolean knight(int r,int c)
+	{
+		int[][] a = validPlaces(r,c);
+		solutions[key-1]=r*array[0].length+c;
+		array[r][c]=key++;
+		
+		for(int i=0;i<a.length;i++)
+		{
+			solutions[key-1]=a[i][0]*array[0].length+a[i][1];
+			array[a[i][0]][a[i][1]] = key;
+			if (checkOnes() == true)
+			{
+				//solutions
+				System.out.println("Solution found");
+				display();
+				return true;
+			}
+			if(knight(a[i][0], a[i][1])==true)
+				return true;
+		}
+		key=array[r][c];
+		array[r][c]=0;
+		return false;
+	}
+	
+	public static void setNumber(int n)
+	{
+		for(int i=0;i<array.length;i++)
+		{
+			for(int j=0;j<array[0].length;j++)
+			{
+				array[i][j]=n;
+			}
+		}
+	}
+	
 	public static boolean checkOnes()
 	{
 		
@@ -135,42 +178,6 @@ public class KnightsTour {
 	}
 	
 	
-	public static void knight(int r,int c)
-	{
-		int[][] a = validPlaces(r,c);
-		array[r][c]=1;
-		for(int i=0;i<a.length;i++)
-		{
-			array[a[i][0]][a[i][1]] = 1;
-			if (checkOnes() == true)
-			{
-				//solutions++;
-				//System.out.println("solved");
-				
-			}
-			knight(a[i][0], a[i][1]);
-		}
-		array[r][c]=0;
-	}
-	
-	public static void initialise()
-	{
-		x=y=0;
-		isPlaced = false;
-		String s=JOptionPane.showInputDialog("Enter the size of the board");
-		int n = Integer.parseInt(s.charAt(0)+"");
-		int m = Integer.parseInt(s.charAt(2)+"");
-		array = new int[n][m];
-		solution = new int[n*m];
-		
-		for(int i=0;i<array.length;i++)
-		{
-			for(int j=0;j<array[0].length;j++)
-			{
-				array[i][j]=0;
-			}
-		}
-	}
 	
 	public static void drawChessBoard(Graphics g)
 	{
@@ -187,16 +194,36 @@ public class KnightsTour {
 					g.setColor(Color.black);
 				
 				int width = FWidth/array[0].length;
-				int height = (FHeight*2/3)/array.length;
+				int height = FHeight/array.length;
 				
 				g.fillRect(j*width, i*height, width, height);
+				if(isPlaced==true)
+				{
+					g.setColor(Color.GREEN);
+					g.setFont(new Font("SansSerif",Font.PLAIN,25));
+					g.drawString(array[i][j]+"", j*width+width/3, i*height+height/2);
+				}
 			}
 			
 		}
 	}
 	
+	public static int[] getGridPosition()
+	{
+		
+		int r = Math.floorDiv(y,Math.floorDiv(frame.getHeight(),array.length));   // Position / height of the frame. Height is FrameHeight/No.of grids.
+		int c = Math.floorDiv(x,Math.floorDiv(frame.getWidth(),array[0].length));		// Position / width of the frame.
+		int[] a = new int[2];
+		a[0]=r;
+		a[1]=c;
+		
+		return a;
+	}
+	
+	
 	public static void placeKnight(Graphics g)
 	{
+		g.setColor(Color.blue);
 		int r = getGridPosition()[0];
 		int c = getGridPosition()[1];
 		System.out.println("r: "+r+" c: "+c);
@@ -204,7 +231,7 @@ public class KnightsTour {
 		int FHeight = frame.getHeight();
 		
 		int width = Math.floorDiv(FWidth,array[0].length);
-		int height = Math.floorDiv((FHeight*2/3),array.length);
+		int height = Math.floorDiv(FHeight,array.length);
 		
 		int x = r*height+height/3;
 		int y = c*width+width/3;
@@ -224,17 +251,45 @@ public class KnightsTour {
 			int FWidth = frame.getWidth();
 			int FHeight = frame.getHeight()-22;
 			
-			
 			drawChessBoard(g);
 			
 			g.setColor(Color.BLUE);
-			if(isPlaced==true)
-				placeKnight(g);
-			
 		}
 		
 	}
 	
+	public static class Action implements ActionListener
+	{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if(len>array.length*array[0].length)
+			{
+				
+				flag=false;
+				return;
+			}
+			Graphics g = frame.getGraphics();
+			g.setColor(Color.red);
+			
+			int x1,x2,y1,y2;
+			int width = frame.getWidth()/array[0].length;
+			int height = frame.getWidth()/array.length;
+			x1 = solutions[(int)len]%array[0].length;
+			x1=x1*width+width/2;
+			x2 = solutions[((int)len)+1]%array[0].length;
+			x2=x2*width+width/2;
+			y1 = solutions[(int)len]/array[0].length;
+			y1=y1*height+height/2;
+			y2 = solutions[((int)len)+1]/array[0].length;
+			y2=y2*height+height/2;
+			
+			g.drawLine(x1, y1, x1+(int)((x2-x1)*(len-(int)len)), y1+(int)((y2-y1)*(len-(int)len)));
+			
+			len+=0.01;
+		}
+		
+	}
 	
 	public static class Mouse implements MouseListener
 	{
@@ -251,10 +306,20 @@ public class KnightsTour {
 		public void mouseReleased(MouseEvent e) {
 			x=e.getX();
 			y=e.getY();
-			System.out.println(x+","+y);
-			isPlaced = true;
-			frame.paintComponents(frame.getGraphics());
-			getGridPosition();
+			if(knight(getGridPosition()[0],getGridPosition()[1])==false)
+			{
+				JOptionPane.showMessageDialog(null, "No solution found for that position");
+			}
+			else
+			{
+				isPlaced = true;
+				System.out.println("Drawing solution");
+				frame.paintComponents(frame.getGraphics());
+				//drawSolution(frame.getGraphics());
+				Timer timer = new Timer(5,new Action());
+				timer.start();
+				setNumber(0);
+			}
 		}
 
 		@Override
@@ -271,18 +336,20 @@ public class KnightsTour {
 		
 	}
 	
-	public static int[] getGridPosition()
+	public static void initialise()
 	{
+		x=y=0;
+		flag = isPlaced = false;
+		len=0;
+		String s=JOptionPane.showInputDialog("Enter the size of the board");
+		int n = Integer.parseInt(s.charAt(0)+"");
+		int m = Integer.parseInt(s.charAt(2)+"");
+		array = new int[n][m];
+		key = 1;
+		solutions = new int[n*m];
 		
-		int r = Math.floorDiv(y,Math.floorDiv((frame.getHeight()*2/3),array.length));   // Position / height of the frame. Height is FrameHeight/No.of grids.
-		int c = Math.floorDiv(x,Math.floorDiv(frame.getWidth(),array[0].length));		// Position / width of the frame.
-		int[] a = new int[2];
-		a[0]=r;
-		a[1]=c;
-		
-		return a;
+		setNumber(0);
 	}
-	
 	
 	public static void main(String args[])
 	{
@@ -291,13 +358,13 @@ public class KnightsTour {
 		frame = new JFrame("Knight's tour");
 		Panel graphicsPanel = new Panel();
 		
-		
 		graphicsPanel.addMouseListener(new Mouse());
-		frame.setLayout(new GridLayout(1,1));
 		
-		frame.setSize(600, 1000);
+		frame.setLayout(new GridLayout(1,1));
+		frame.setSize(600, 600);
 		frame.add(graphicsPanel);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
+		
 	}
 }
